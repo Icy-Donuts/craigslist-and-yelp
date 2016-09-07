@@ -143,7 +143,7 @@ var craigslistData = function(neighbourhoods, maxprice) {
 };
 
 craigslistData(['tenderloin', 'mission', 'nob hill']).then(function(res) {
-  console.log(res);
+  console.log(res.listings.tenderloin[7]);
 });
 
 //CL.getLinks('boston','roo').then(function(res){console.log(res)})
