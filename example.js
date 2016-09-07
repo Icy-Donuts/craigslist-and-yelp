@@ -76,8 +76,6 @@ var neighbourhoodCodes = {
 };
 
 
-//getLinks example, see all room shares in Boston
-
 var composeQuery = function(neighbourhoods, maxprice) {
   var neighbourhoodUrls = [];
   neighbourhoods.map(function(neighbourhood, index) {
