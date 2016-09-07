@@ -56,29 +56,20 @@ var getNeighborhoods = function(results) {
       if (!neighborhoodCount[item.neighborhoods[i]]) {
         neighborhoodCount[item.neighborhoods[i]] = 1;
       } else {
-        neighborhoodCount[item.neighborhoods[i]] ++;
-
+        neighborhoodCount[item.neighborhoods[i]]++;
       }
     }
   });
-  console.log(neighborhoodCount);
-  var orderedListings = [];
-  for (item in neighborhoodCount) {
-    var bool = false;
-    for (var i = 0; i < orderedListings.length; i++) {
-      console.log(neighborhoodCount[item], orderedListings[i][item]);
-      if (neighborhoodCount[item] > orderedListings[i][item]) {
-        bool = true;
-        orderedListings.splice(i, 0, {item: neighborhoodCount[item]});
-      }
-    }
-    if (bool === false) {
-      orderedListings.push({item: neighborhoodCount[item]});
-    }
-    console.log(item, neighborhoodCount[item]);
+  var neighborhoods = [];
+  for (neighborhood in neighborhoodCount) {
+    neighborhoods.push({neighborhood: neighborhood, value: neighborhoodCount[neighborhood]});
   }
-console.log(orderedListings);
-return neighborhoodCount;
+  sortedNeighborhoods = neighborhoods.sort(function(a, b) {
+    return b.value - a.value;
+  });
+  var top3 = sortedNeighborhoods.slice(0, 3);
+  console.log(top3);
+  return top3;
 };
 
 
