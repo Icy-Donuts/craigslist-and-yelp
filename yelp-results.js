@@ -1,15 +1,12 @@
 var apiKey = require('./api-key.js');
 var request = require('request');
-var OAuth   = require('oauth-1.0a');
 var sampleYelpResults = require('./yelp-results.json');
-var yelp = require('node-yelp');
-var Promise = require('bluebird')
-
+var sampleTwoYelpResults = require('./yelp-two-results.json');
 var request = require('request');
 
-var searchYelp = function(location, term) {
-
-  return new Promise(function(resolve,reject){
+var searchYelp = function(location, terms) {
+  var allData;
+  for (var i = 0; i < terms.length; i++) {
     var request_data = {
       method: 'GET',
       url: 'https://api.yelp.com/v2/search?'
@@ -27,7 +24,7 @@ var searchYelp = function(location, term) {
       },
       qs: {
         location: location,
-        term: term,
+        term: terms[i],
         limit: 10,
         sort: 2,
       }
@@ -36,7 +33,6 @@ var searchYelp = function(location, term) {
         return console.log('Error: ', err);
       }
       var data = [];
-      //console.log('success: ',JSON.parse(response.body).businesses[0]);
       resData = JSON.parse(body);
       for (var i = 0; i < resData.businesses.length; i++) {
         data.push({
@@ -49,21 +45,23 @@ var searchYelp = function(location, term) {
           neighborhoods: resData.businesses[i].location.neighborhoods
         });
       }
-      resolve(data);
+      allData = allData ? allData.concat(data) : data;
     });
-
-  })
+  };
+  return allData;
 };
 
+//searchYelp('san francisco', ['pizza', 'books']);
+
 var getNeighborhoods = function(results) {
-  var neighborhoodCount = {};
-  results.map(function(item, index) {
-    for (var i = 0; i < item.neighborhoods.length; i++) {
-      if (!neighborhoodCount[item.neighborhoods[i]]) {
-        neighborhoodCount[item.neighborhoods[i]] = 1;
-      } else {
-        neighborhoodCount[item.neighborhoods[i]]++;
-      }
+    var neighborhoodCount = {};
+    results.map(function(item, index) {
+      for (var i = 0; i < item.neighborhoods.length; i++) {
+        if (!neighborhoodCount[item.neighborhoods[i]]) {
+          neighborhoodCount[item.neighborhoods[i]] = 1;
+        } else {
+          neighborhoodCount[item.neighborhoods[i]]++;
+        }
     }
   });
   var neighborhoods = [];
@@ -74,10 +72,9 @@ var getNeighborhoods = function(results) {
     return b.value - a.value;
   });
   var top3 = sortedNeighborhoods.slice(0, 3);
+  console.log(top3);
   return top3;
 };
 
-searchYelp('Boston','gluten-free').then(function(data){
-  console.log(getNeighborhoods(data));
-})
-//getNeighborhoods(sampleYelpResults);
+getNeighborhoods(sampleYelpResults);
+getNeighborhoods(sampleTwoYelpResults);
